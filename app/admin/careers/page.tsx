@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { Users, Plus, Trash2, Edit2, X, Briefcase, MapPin, Clock } from 'lucide-react';
+import { Users, Plus, Trash2, Edit2, X, Briefcase, MapPin, Clock, HelpCircle } from 'lucide-react';
 import { api } from '../../lib/api';
 import { TableSetupBanner } from '../components/TableSetupBanner';
 
@@ -21,6 +21,22 @@ export default function AdminCareersPage() {
     requirements: '',
     status: 'open',
   });
+
+  const [customQuestions, setCustomQuestions] = useState<
+    Array<{ id: string; question: string; required: boolean }>
+  >([]);
+
+  // Lock background scroll when modal is open
+  useEffect(() => {
+    if (modalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [modalOpen]);
 
   const fetchCareers = async () => {
     setLoading(true);
@@ -50,6 +66,7 @@ export default function AdminCareersPage() {
       requirements: '',
       status: 'open',
     });
+    setCustomQuestions([]);
     setModalOpen(true);
   };
 
@@ -64,7 +81,37 @@ export default function AdminCareersPage() {
       requirements: Array.isArray(item.requirements) ? item.requirements.join('\n') : '',
       status: item.status,
     });
+    setCustomQuestions(
+      Array.isArray(item.custom_questions)
+        ? item.custom_questions.map((q: any, i: number) => ({
+            id: q.id || `q-${i}`,
+            question: q.question || '',
+            required: !!q.required,
+          }))
+        : []
+    );
     setModalOpen(true);
+  };
+
+  const handleAddQuestion = () => {
+    setCustomQuestions((prev) => [
+      ...prev,
+      { id: `q-${Date.now()}`, question: '', required: false },
+    ]);
+  };
+
+  const handleUpdateQuestion = (
+    id: string,
+    field: 'question' | 'required',
+    value: any
+  ) => {
+    setCustomQuestions((prev) =>
+      prev.map((q) => (q.id === id ? { ...q, [field]: value } : q))
+    );
+  };
+
+  const handleRemoveQuestion = (id: string) => {
+    setCustomQuestions((prev) => prev.filter((q) => q.id !== id));
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -75,6 +122,13 @@ export default function AdminCareersPage() {
         .split('\n')
         .map((r) => r.trim())
         .filter(Boolean),
+      custom_questions: customQuestions
+        .map((q) => ({
+          id: q.id,
+          question: q.question.trim(),
+          required: q.required,
+        }))
+        .filter((q) => q.question.length > 0),
     };
 
     try {
@@ -114,7 +168,7 @@ export default function AdminCareersPage() {
             <span>Careers & Job Openings</span>
           </h1>
           <p className="text-sm text-slate-500 mt-0.5">
-            Create, edit, or close job postings published on your agency careers page.
+            Create, edit, or close job postings with custom screening questions.
           </p>
         </div>
 
@@ -158,6 +212,11 @@ export default function AdminCareersPage() {
                   >
                     {career.status}
                   </span>
+                  {career.custom_questions?.length > 0 && (
+                    <span className="text-[10px] font-semibold px-2 py-0.5 rounded-md bg-indigo-50 text-indigo-700 border border-indigo-200/60">
+                      {career.custom_questions.length} Custom Qs
+                    </span>
+                  )}
                 </div>
 
                 <div className="flex flex-wrap items-center gap-4 text-xs text-slate-500">
@@ -196,23 +255,29 @@ export default function AdminCareersPage() {
         </div>
       )}
 
-      {/* Modal */}
+      {/* Modal with Custom Questions Builder */}
       {modalOpen && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto">
-          <div className="w-full max-w-xl bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden my-8">
-            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
+        <div
+          onClick={() => setModalOpen(false)}
+          className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-sm flex items-center justify-center p-4 overflow-y-auto overscroll-contain"
+        >
+          <div
+            onClick={(e) => e.stopPropagation()}
+            className="w-full max-w-xl bg-white border border-slate-200 rounded-3xl shadow-2xl overflow-hidden my-8 max-h-[90vh] flex flex-col"
+          >
+            <div className="px-6 py-4 border-b border-slate-100 flex items-center justify-between bg-slate-50/50 shrink-0">
               <h2 className="text-base font-bold text-slate-900">
                 {activeItem ? 'Edit Job Listing' : 'Post New Career Opportunity'}
               </h2>
               <button
                 onClick={() => setModalOpen(false)}
-                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100"
+                className="p-1.5 text-slate-400 hover:text-slate-700 rounded-lg hover:bg-slate-100 cursor-pointer"
               >
                 <X className="w-4 h-4" />
               </button>
             </div>
 
-            <form onSubmit={handleSubmit} className="p-6 space-y-4">
+            <form onSubmit={handleSubmit} className="p-6 space-y-4 overflow-y-auto flex-1">
               <div>
                 <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider mb-1.5">
                   Job Title *
@@ -263,7 +328,7 @@ export default function AdminCareersPage() {
                   <select
                     value={formData.type}
                     onChange={(e) => setFormData({ ...formData, type: e.target.value })}
-                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:border-blue-600 focus:bg-white"
+                    className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:border-blue-600 focus:bg-white cursor-pointer"
                   >
                     <option value="full-time">Full-time</option>
                     <option value="part-time">Part-time</option>
@@ -280,7 +345,7 @@ export default function AdminCareersPage() {
                 </label>
                 <textarea
                   required
-                  rows={4}
+                  rows={3}
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
                   placeholder="Outline responsibilities and role vision..."
@@ -293,12 +358,75 @@ export default function AdminCareersPage() {
                   Requirements (One per line)
                 </label>
                 <textarea
-                  rows={3}
+                  rows={2}
                   value={formData.requirements}
                   onChange={(e) => setFormData({ ...formData, requirements: e.target.value })}
-                  placeholder="5+ years experience in agency&#10;Proficiency in Figma and Adobe Suite&#10;Demonstrable track record"
+                  placeholder="5+ years experience in agency&#10;Proficiency in Figma and Adobe Suite"
                   className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:border-blue-600 focus:bg-white leading-relaxed"
                 />
+              </div>
+
+              {/* CUSTOM SCREENING QUESTIONS BUILDER */}
+              <div className="pt-2">
+                <div className="flex items-center justify-between mb-2">
+                  <div>
+                    <label className="block text-xs font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                      <HelpCircle className="w-3.5 h-3.5 text-blue-600" />
+                      <span>Custom Application Questions</span>
+                    </label>
+                    <p className="text-[11px] text-slate-400">
+                      Add screening questions candidates must answer when applying.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={handleAddQuestion}
+                    className="inline-flex items-center gap-1 px-2.5 py-1 rounded-lg bg-blue-50 hover:bg-blue-600 text-blue-600 hover:text-white text-xs font-bold transition-all cursor-pointer"
+                  >
+                    <Plus className="w-3.5 h-3.5" />
+                    <span>Add Question</span>
+                  </button>
+                </div>
+
+                {customQuestions.length > 0 && (
+                  <div className="space-y-2 p-3 rounded-2xl bg-slate-50 border border-slate-200">
+                    {customQuestions.map((q, idx) => (
+                      <div key={q.id} className="flex items-center gap-2">
+                        <span className="text-xs font-bold text-slate-400 w-5 shrink-0 text-center">
+                          {idx + 1}.
+                        </span>
+                        <input
+                          type="text"
+                          value={q.question}
+                          onChange={(e) =>
+                            handleUpdateQuestion(q.id, 'question', e.target.value)
+                          }
+                          placeholder="e.g. Portfolio URL or Notice Period?"
+                          className="flex-1 bg-white border border-slate-200 rounded-xl px-3 py-1.5 text-xs text-slate-900 focus:outline-none focus:border-blue-600"
+                        />
+                        <label className="flex items-center gap-1 text-[11px] text-slate-600 cursor-pointer shrink-0 font-medium select-none">
+                          <input
+                            type="checkbox"
+                            checked={q.required}
+                            onChange={(e) =>
+                              handleUpdateQuestion(q.id, 'required', e.target.checked)
+                            }
+                            className="rounded text-blue-600 focus:ring-0"
+                          />
+                          <span>Required</span>
+                        </label>
+                        <button
+                          type="button"
+                          onClick={() => handleRemoveQuestion(q.id)}
+                          className="p-1.5 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-rose-50 cursor-pointer"
+                          title="Remove question"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                )}
               </div>
 
               <div>
@@ -308,7 +436,7 @@ export default function AdminCareersPage() {
                 <select
                   value={formData.status}
                   onChange={(e) => setFormData({ ...formData, status: e.target.value })}
-                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:border-blue-600 focus:bg-white"
+                  className="w-full bg-slate-50 border border-slate-200 rounded-xl px-3.5 py-2 text-sm text-slate-900 focus:outline-none focus:border-blue-600 focus:bg-white cursor-pointer"
                 >
                   <option value="open">Open (Accepting Applications)</option>
                   <option value="closed">Closed</option>
@@ -316,7 +444,7 @@ export default function AdminCareersPage() {
                 </select>
               </div>
 
-              <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-3">
+              <div className="pt-4 border-t border-slate-100 flex items-center justify-end gap-3 shrink-0">
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}

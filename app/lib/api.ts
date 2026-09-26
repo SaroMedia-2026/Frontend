@@ -47,6 +47,17 @@ export const authStorage = {
   },
 };
 
+function toQueryString(params: Record<string, any> = {}): string {
+  const q = new URLSearchParams();
+  for (const [key, val] of Object.entries(params)) {
+    if (val !== undefined && val !== null && val !== '' && val !== 'undefined' && val !== 'null') {
+      q.append(key, String(val));
+    }
+  }
+  const str = q.toString();
+  return str ? `?${str}` : '';
+}
+
 interface RequestOptions extends RequestInit {
   auth?: boolean;
 }
@@ -149,17 +160,19 @@ export const api = {
 
   // --- PORTFOLIO ---
   async getPortfolio(params: Record<string, any> = {}) {
-    const query = new URLSearchParams(params).toString();
-    return request(`/portfolio${query ? `?${query}` : ''}`, { auth: false });
+    return request(`/portfolio${toQueryString(params)}`, { auth: false });
   },
 
   async getPortfolioAdmin(params: Record<string, any> = {}) {
-    const query = new URLSearchParams(params).toString();
-    return request(`/portfolio${query ? `?${query}` : ''}`);
+    return request(`/portfolio${toQueryString(params)}`);
   },
 
   async getPortfolioById(id: string) {
-    return request(`/portfolio/${id}`);
+    return request(`/portfolio/${id}`, { auth: false });
+  },
+
+  async getPortfolioBySlug(slug: string) {
+    return request(`/portfolio/slug/${slug}`, { auth: false });
   },
 
   async createPortfolio(payload: any) {
@@ -262,8 +275,7 @@ export const api = {
 
   // --- APPLICATIONS ---
   async getApplications(params: Record<string, any> = {}) {
-    const query = new URLSearchParams(params).toString();
-    return request(`/applications${query ? `?${query}` : ''}`);
+    return request(`/applications${toQueryString(params)}`);
   },
 
   async updateApplicationStatus(id: string, status: string, notes?: string) {
@@ -278,9 +290,24 @@ export const api = {
   },
 
   // --- CONTACT SUBMISSIONS ---
+  async submitContact(payload: { name: string; email: string; phone?: string; subject?: string; message: string }) {
+    return request('/contacts', {
+      method: 'POST',
+      auth: false,
+      body: JSON.stringify(payload),
+    });
+  },
+
+  async submitApplication(careerId: string, formData: FormData) {
+    return request(`/careers/${careerId}/apply`, {
+      method: 'POST',
+      auth: false,
+      body: formData,
+    });
+  },
+
   async getContacts(params: Record<string, any> = {}) {
-    const query = new URLSearchParams(params).toString();
-    return request(`/contacts${query ? `?${query}` : ''}`);
+    return request(`/contacts${toQueryString(params)}`);
   },
 
   async updateContactStatus(id: string, status: string, notes?: string) {

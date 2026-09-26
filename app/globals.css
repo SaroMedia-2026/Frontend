@@ -19,24 +19,35 @@
   --font-mono: var(--font-geist-mono);
 }
 
-html {
+html:not([data-in-admin="true"]) {
   scroll-behavior: smooth;
   cursor: none;
 }
 
-body {
-  margin: 0;
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-geist-sans), Arial, Helvetica, sans-serif;
+html:not([data-in-admin="true"]) a,
+html:not([data-in-admin="true"]) button,
+html:not([data-in-admin="true"]) input,
+html:not([data-in-admin="true"]) textarea,
+html:not([data-in-admin="true"]) select {
+  cursor: none;
 }
 
-a,
-button,
-input,
-textarea,
-select {
-  cursor: none;
+html[data-in-admin="true"],
+html[data-in-admin="true"] body,
+html[data-in-admin="true"] * {
+  cursor: auto !important;
+}
+
+html[data-in-admin="true"] a,
+html[data-in-admin="true"] button,
+html[data-in-admin="true"] select,
+html[data-in-admin="true"] [role="button"] {
+  cursor: pointer !important;
+}
+
+html[data-in-admin="true"] input,
+html[data-in-admin="true"] textarea {
+  cursor: text !important;
 }
 
 * {

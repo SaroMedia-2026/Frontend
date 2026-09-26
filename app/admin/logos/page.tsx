@@ -39,6 +39,17 @@ export default function AdminLogosPage() {
     fetchLogos();
   }, []);
 
+  useEffect(() => {
+    if (modalOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [modalOpen]);
+
   const handleOpenCreateModal = () => {
     setActiveItem(null);
     setFormData({

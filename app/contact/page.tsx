@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 import { motion, Variants } from "framer-motion";
 import { 
@@ -8,7 +9,10 @@ import {
   MapPin, 
   Briefcase, 
   Send,
-  Sparkles
+  Sparkles,
+  CheckCircle,
+  AlertCircle,
+  Loader2
 } from "lucide-react";
 import { 
   FaInstagram, 
@@ -18,6 +22,7 @@ import {
 } from "react-icons/fa";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
+import { api } from "../lib/api";
 
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
@@ -40,6 +45,56 @@ const itemVariants: Variants = {
 };
 
 export default function ContactPage() {
+  const [formData, setFormData] = useState({
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    subject: "",
+    message: "",
+  });
+
+  const [submitting, setSubmitting] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+    setError(null);
+
+    const fullName = `${formData.firstName} ${formData.lastName}`.trim();
+    if (!fullName) {
+      setError("Please provide your name.");
+      setSubmitting(false);
+      return;
+    }
+
+    try {
+      await api.submitContact({
+        name: fullName,
+        email: formData.email,
+        phone: formData.phone || undefined,
+        subject: formData.subject || undefined,
+        message: formData.message,
+      });
+
+      setSuccess(true);
+      setFormData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        subject: "",
+        message: "",
+      });
+    } catch (err: any) {
+      setError(err?.message || "Failed to submit message. Please try again.");
+    } finally {
+      setSubmitting(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-[#f8fbfe] text-slate-900 overflow-hidden">
       <Header />
@@ -98,32 +153,31 @@ export default function ContactPage() {
         </section>
 
         {/* CONTACT SECTION - INFO & FORM */}
-        <section className="px-4 py-16 md:py-24">
+        <section className="relative px-4 pb-20 pt-4 md:pb-28">
           <div className="mx-auto max-w-[1340px]">
-            <div className="grid gap-10 lg:grid-cols-[0.8fr_1.2fr] lg:gap-14">
-              
+            <div className="grid gap-12 lg:grid-cols-[1fr_1.3fr] lg:gap-16">
               {/* Left Column - Contact Info */}
               <motion.div
                 initial={{ opacity: 0, x: -30 }}
                 whileInView={{ opacity: 1, x: 0 }}
                 viewport={{ once: true }}
                 transition={{ duration: 0.6 }}
-                className="space-y-6"
               >
-                <div className="rounded-[2.2rem] border border-slate-200/90 bg-white p-6 shadow-[0_15px_40px_rgba(15,23,42,0.05)] md:p-8">
-                  <div className="mb-6 flex items-center gap-3">
-                    <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-blue-50 text-[#0e85f9]">
-                      <Sparkles className="h-5 w-5" />
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-black tracking-tight text-slate-900">Get In Touch</h3>
-                      <p className="text-xs text-slate-500">We respond within 24 business hours</p>
-                    </div>
+                <div className="rounded-[2.2rem] border border-slate-200/90 bg-white p-8 shadow-[0_15px_40px_rgba(15,23,42,0.05)] md:p-10">
+                  <div className="inline-flex rounded-full bg-blue-50 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wider text-[#0e85f9]">
+                    Get In Touch
                   </div>
 
-                  <div className="space-y-4">
-                    {/* Email */}
-                    <motion.div
+                  <h2 className="mt-4 text-2xl font-black tracking-tight text-slate-900 md:text-3xl">
+                    We'd Love to Hear From You
+                  </h2>
+
+                  <p className="mt-3 text-sm leading-relaxed text-slate-600">
+                    Whether you're looking for high-performance paid ads, luxury brand direction, or commercial videography, our leadership team is ready to assist.
+                  </p>
+
+                  <div className="mt-8 space-y-4">
+                    <motion.div 
                       whileHover={{ x: 4 }}
                       className="group flex items-start gap-4 rounded-2xl p-3.5 transition-all hover:bg-blue-50/60"
                     >
@@ -131,15 +185,14 @@ export default function ContactPage() {
                         <Mail className="h-5 w-5" />
                       </div>
                       <div>
-                        <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Email</div>
-                        <a href="mailto:info@saro.com.np" className="text-base font-semibold text-slate-900 transition-colors hover:text-[#0e85f9]">
-                          info@saro.com.np
+                        <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Email Us</div>
+                        <a href="mailto:hello@saroagency.com" className="text-base font-bold text-slate-900 transition-colors group-hover:text-[#0e85f9]">
+                          hello@saroagency.com
                         </a>
                       </div>
                     </motion.div>
 
-                    {/* Phone */}
-                    <motion.div
+                    <motion.div 
                       whileHover={{ x: 4 }}
                       className="group flex items-start gap-4 rounded-2xl p-3.5 transition-all hover:bg-blue-50/60"
                     >
@@ -147,20 +200,14 @@ export default function ContactPage() {
                         <Phone className="h-5 w-5" />
                       </div>
                       <div>
-                        <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Phone</div>
-                        <div className="flex flex-col text-base font-semibold text-slate-900">
-                          <a href="tel:+9779742936812" className="transition-colors hover:text-[#0e85f9]">
-                            +977 9742936812
-                          </a>
-                          <a href="tel:+9779813183939" className="transition-colors hover:text-[#0e85f9]">
-                            +977 9813183939
-                          </a>
-                        </div>
+                        <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Call Us</div>
+                        <a href="tel:+9779800000000" className="text-base font-bold text-slate-900 transition-colors group-hover:text-[#0e85f9]">
+                          +977 9800000000
+                        </a>
                       </div>
                     </motion.div>
 
-                    {/* Address */}
-                    <motion.div
+                    <motion.div 
                       whileHover={{ x: 4 }}
                       className="group flex items-start gap-4 rounded-2xl p-3.5 transition-all hover:bg-blue-50/60"
                     >
@@ -168,15 +215,14 @@ export default function ContactPage() {
                         <MapPin className="h-5 w-5" />
                       </div>
                       <div>
-                        <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Location</div>
-                        <div className="text-base font-semibold text-slate-900 leading-snug">
-                          Thankot, Kalimati<br />Kathmandu, Nepal
+                        <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Visit Us</div>
+                        <div className="text-base font-bold text-slate-900">
+                          Thankot, Kalimati, Kathmandu, Nepal
                         </div>
                       </div>
                     </motion.div>
 
-                    {/* Careers Link */}
-                    <motion.div
+                    <motion.div 
                       whileHover={{ x: 4 }}
                       className="group flex items-start gap-4 rounded-2xl p-3.5 transition-all hover:bg-blue-50/60"
                     >
@@ -197,16 +243,18 @@ export default function ContactPage() {
                     <p className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Follow Us</p>
                     <div className="mt-3 flex gap-3">
                       {[
-                        { icon: FaInstagram, label: "Instagram" },
-                        { icon: FaLinkedinIn, label: "LinkedIn" },
-                        { icon: FaFacebookF, label: "Facebook" },
-                        { icon: FaYoutube, label: "YouTube" },
+                        { icon: FaInstagram, label: "Instagram", href: "https://instagram.com" },
+                        { icon: FaLinkedinIn, label: "LinkedIn", href: "https://linkedin.com" },
+                        { icon: FaFacebookF, label: "Facebook", href: "https://facebook.com" },
+                        { icon: FaYoutube, label: "YouTube", href: "https://youtube.com" },
                       ].map((item, i) => (
                         <motion.a
                           key={i}
                           whileHover={{ scale: 1.12, y: -2 }}
                           whileTap={{ scale: 0.92 }}
-                          href="#"
+                          href={item.href}
+                          target="_blank"
+                          rel="noreferrer"
                           aria-label={item.label}
                           className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-100 text-slate-700 transition-all hover:bg-[#0e85f9] hover:text-white hover:shadow-lg hover:shadow-[#0e85f9]/30"
                         >
@@ -235,69 +283,141 @@ export default function ContactPage() {
                     </p>
                   </div>
 
-                  <form className="space-y-5">
-                    <div className="grid gap-5 sm:grid-cols-2">
-                      <div>
-                        <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-700">
-                          First Name <span className="text-[#0e85f9]">*</span>
-                        </label>
-                        <input 
-                          type="text"
-                          className="w-full rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3.5 text-sm text-slate-900 outline-none transition-all focus:border-[#0e85f9] focus:bg-white focus:shadow-md focus:shadow-[#0e85f9]/10" 
-                          placeholder="John" 
-                          required
-                        />
-                      </div>
-                      <div>
-                        <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-700">
-                          Last Name <span className="text-[#0e85f9]">*</span>
-                        </label>
-                        <input 
-                          type="text"
-                          className="w-full rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3.5 text-sm text-slate-900 outline-none transition-all focus:border-[#0e85f9] focus:bg-white focus:shadow-md focus:shadow-[#0e85f9]/10" 
-                          placeholder="Doe" 
-                          required
-                        />
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-700">
-                        Email Address <span className="text-[#0e85f9]">*</span>
-                      </label>
-                      <input 
-                        type="email" 
-                        className="w-full rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3.5 text-sm text-slate-900 outline-none transition-all focus:border-[#0e85f9] focus:bg-white focus:shadow-md focus:shadow-[#0e85f9]/10" 
-                        placeholder="you@company.com" 
-                        required
-                      />
-                    </div>
-
-                    <div>
-                      <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-700">
-                        Message <span className="text-[#0e85f9]">*</span>
-                      </label>
-                      <textarea 
-                        rows={5} 
-                        className="w-full rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3.5 text-sm text-slate-900 outline-none transition-all focus:border-[#0e85f9] focus:bg-white focus:shadow-md focus:shadow-[#0e85f9]/10 resize-y min-h-[130px]" 
-                        placeholder="Tell us about your project, goals, or required services..." 
-                        required
-                      />
-                    </div>
-
-                    <motion.button 
-                      whileHover={{ scale: 1.02 }}
-                      whileTap={{ scale: 0.98 }}
-                      type="submit" 
-                      className="group relative w-full overflow-hidden rounded-2xl bg-[#0e85f9] px-6 py-4 font-bold text-white shadow-[0_10px_25px_rgba(14,133,249,0.3)] transition-all hover:bg-blue-600 hover:shadow-xl cursor-pointer"
+                  {success ? (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      className="p-8 rounded-2xl bg-emerald-50 border border-emerald-200 text-center"
                     >
-                      <span className="relative z-10 flex items-center justify-center gap-2 text-sm font-bold uppercase tracking-[0.12em]">
-                        <Send className="h-4 w-4" />
-                        <span>Send Message</span>
-                        <span className="transition-transform group-hover:translate-x-1">→</span>
-                      </span>
-                    </motion.button>
-                  </form>
+                      <CheckCircle className="w-12 h-12 text-emerald-600 mx-auto mb-3" />
+                      <h3 className="text-xl font-bold text-emerald-900">Thank You! Message Received</h3>
+                      <p className="text-sm text-emerald-700 mt-2 max-w-md mx-auto">
+                        Your inquiry has been stored directly in our agency CMS. Our strategy team will review your project details and follow up within 24 hours.
+                      </p>
+                      <button
+                        onClick={() => setSuccess(false)}
+                        className="mt-6 px-6 py-2.5 rounded-full bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-bold uppercase tracking-wider transition-colors cursor-pointer"
+                      >
+                        Send Another Inquiry
+                      </button>
+                    </motion.div>
+                  ) : (
+                    <form onSubmit={handleSubmit} className="space-y-5">
+                      {error && (
+                        <div className="p-4 rounded-xl bg-rose-50 border border-rose-200 text-xs text-rose-700 flex items-center gap-2">
+                          <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
+                          <span>{error}</span>
+                        </div>
+                      )}
+
+                      <div className="grid gap-5 sm:grid-cols-2">
+                        <div>
+                          <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-700">
+                            First Name <span className="text-[#0e85f9]">*</span>
+                          </label>
+                          <input 
+                            type="text"
+                            value={formData.firstName}
+                            onChange={(e) => setFormData({ ...formData, firstName: e.target.value })}
+                            className="w-full rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3.5 text-sm text-slate-900 outline-none transition-all focus:border-[#0e85f9] focus:bg-white focus:shadow-md focus:shadow-[#0e85f9]/10" 
+                            placeholder="John" 
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-700">
+                            Last Name <span className="text-[#0e85f9]">*</span>
+                          </label>
+                          <input 
+                            type="text"
+                            value={formData.lastName}
+                            onChange={(e) => setFormData({ ...formData, lastName: e.target.value })}
+                            className="w-full rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3.5 text-sm text-slate-900 outline-none transition-all focus:border-[#0e85f9] focus:bg-white focus:shadow-md focus:shadow-[#0e85f9]/10" 
+                            placeholder="Doe" 
+                            required
+                          />
+                        </div>
+                      </div>
+
+                      <div className="grid gap-5 sm:grid-cols-2">
+                        <div>
+                          <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-700">
+                            Email Address <span className="text-[#0e85f9]">*</span>
+                          </label>
+                          <input 
+                            type="email" 
+                            value={formData.email}
+                            onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                            className="w-full rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3.5 text-sm text-slate-900 outline-none transition-all focus:border-[#0e85f9] focus:bg-white focus:shadow-md focus:shadow-[#0e85f9]/10" 
+                            placeholder="you@company.com" 
+                            required
+                          />
+                        </div>
+                        <div>
+                          <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-700">
+                            Phone Number
+                          </label>
+                          <input 
+                            type="tel" 
+                            value={formData.phone}
+                            onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                            className="w-full rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3.5 text-sm text-slate-900 outline-none transition-all focus:border-[#0e85f9] focus:bg-white focus:shadow-md focus:shadow-[#0e85f9]/10" 
+                            placeholder="+1 (555) 000-0000" 
+                          />
+                        </div>
+                      </div>
+
+                      <div>
+                        <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-700">
+                          Subject / Project Type
+                        </label>
+                        <input 
+                          type="text" 
+                          value={formData.subject}
+                          onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
+                          className="w-full rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3.5 text-sm text-slate-900 outline-none transition-all focus:border-[#0e85f9] focus:bg-white focus:shadow-md focus:shadow-[#0e85f9]/10" 
+                          placeholder="e.g. Paid Meta Ads, Rebranding, Videography" 
+                        />
+                      </div>
+
+                      <div>
+                        <label className="mb-2 block text-xs font-bold uppercase tracking-wider text-slate-700">
+                          Message <span className="text-[#0e85f9]">*</span>
+                        </label>
+                        <textarea 
+                          rows={5} 
+                          value={formData.message}
+                          onChange={(e) => setFormData({ ...formData, message: e.target.value })}
+                          className="w-full rounded-2xl border border-slate-200 bg-slate-50/80 px-4 py-3.5 text-sm text-slate-900 outline-none transition-all focus:border-[#0e85f9] focus:bg-white focus:shadow-md focus:shadow-[#0e85f9]/10 resize-y min-h-[130px]" 
+                          placeholder="Tell us about your project, goals, or required services..." 
+                          required
+                        />
+                      </div>
+
+                      <motion.button 
+                        whileHover={{ scale: 1.02 }}
+                        whileTap={{ scale: 0.98 }}
+                        type="submit" 
+                        disabled={submitting}
+                        className="group relative w-full overflow-hidden rounded-2xl bg-[#0e85f9] px-6 py-4 font-bold text-white shadow-[0_10px_25px_rgba(14,133,249,0.3)] transition-all hover:bg-blue-600 hover:shadow-xl cursor-pointer disabled:opacity-50"
+                      >
+                        <span className="relative z-10 flex items-center justify-center gap-2 text-sm font-bold uppercase tracking-[0.12em]">
+                          {submitting ? (
+                            <>
+                              <Loader2 className="h-4 w-4 animate-spin" />
+                              <span>Sending Inquiry...</span>
+                            </>
+                          ) : (
+                            <>
+                              <Send className="h-4 w-4" />
+                              <span>Send Message</span>
+                              <span className="transition-transform group-hover:translate-x-1">→</span>
+                            </>
+                          )}
+                        </span>
+                      </motion.button>
+                    </form>
+                  )}
                 </div>
               </motion.div>
             </div>

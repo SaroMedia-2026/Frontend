@@ -45,6 +45,13 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
   const isLoginPage = pathname === '/admin/login';
 
   useEffect(() => {
+    document.documentElement.setAttribute('data-in-admin', 'true');
+    return () => {
+      document.documentElement.removeAttribute('data-in-admin');
+    };
+  }, []);
+
+  useEffect(() => {
     if (isLoginPage) {
       setIsReady(true);
       return;

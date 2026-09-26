@@ -332,11 +332,20 @@ export default function AboutPage() {
                   className="group overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-4 shadow-[0_12px_32px_rgba(15,23,42,0.05)] transition-all hover:border-[#0e85f9]/60 hover:shadow-[0_20px_45px_rgba(14,133,249,0.15)]"
                 >
                   <div className="overflow-hidden rounded-[1.5rem]">
-                    <img
-                      src={member.image}
-                      alt={member.name}
-                      className="aspect-square w-full object-cover transition-transform duration-700 group-hover:scale-108"
-                    />
+                    {member.image ? (
+                      <img
+                        src={member.image}
+                        alt={member.name}
+                        className="aspect-square w-full object-cover transition-transform duration-700 group-hover:scale-108"
+                      />
+                    ) : (
+                      <div className="aspect-square w-full bg-gradient-to-br from-blue-100 via-sky-50 to-slate-100 flex items-center justify-center text-3xl font-black text-blue-600 transition-transform duration-700 group-hover:scale-105">
+                        {member.name
+                          .split(" ")
+                          .map((n: string) => n[0])
+                          .join("")}
+                      </div>
+                    )}
                   </div>
                   <div className="p-4 text-center">
                     <h3 className="text-2xl font-black tracking-[-0.03em] text-slate-900 group-hover:text-[#0e85f9] transition-colors">

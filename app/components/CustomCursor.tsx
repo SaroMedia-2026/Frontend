@@ -1,8 +1,11 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import { usePathname } from "next/navigation";
 
 export function CustomCursor() {
+  const pathname = usePathname();
+  const isAdmin = pathname?.startsWith("/admin");
   const outerRef = useRef<HTMLDivElement | null>(null);
   const innerRef = useRef<HTMLDivElement | null>(null);
   const initialPoint =
@@ -21,7 +24,7 @@ export function CustomCursor() {
       typeof window !== "undefined" &&
       window.matchMedia("(pointer: coarse)").matches;
 
-    if (isTouchDevice) return;
+    if (isTouchDevice || isAdmin) return;
 
     const checkBackground = (x: number, y: number) => {
       let el = document.elementFromPoint(x, y);
@@ -130,6 +133,10 @@ export function CustomCursor() {
       document.removeEventListener("mouseleave", handleMouseLeave);
     };
   }, []);
+
+  if (isAdmin) {
+    return null;
+  }
 
   return (
     <>
