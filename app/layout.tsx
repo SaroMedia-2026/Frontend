@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://saro-agency.example"),
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://saromedia.com.np"),
   title: {
     default: "Saro | Performance Marketing Agency",
     template: "%s | Saro",
