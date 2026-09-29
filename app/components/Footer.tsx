@@ -28,15 +28,38 @@ const legalLinks = [
   { label: "Cookie Policy", href: "/cookies" },
 ];
 
-const socials = [
-  { label: "LinkedIn", icon: FaLinkedinIn, href: "#" },
-  { label: "Facebook", icon: FaFacebookF, href: "#" },
-  { label: "Instagram", icon: FaInstagram, href: "#" },
-  { label: "YouTube", icon: FaYoutube, href: "#" },
-
-];
+import { useEffect, useState } from "react";
+import { api } from "../lib/api";
 
 export function Footer() {
+  const [settings, setSettings] = useState<any>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    api
+      .getSiteSettings()
+      .then((data) => {
+        if (mounted && data) {
+          setSettings(data);
+        }
+      })
+      .catch(() => {});
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  const socialLinks = settings?.social_links || {};
+  const activeSocials = [
+    { label: "Instagram", icon: FaInstagram, href: socialLinks.instagram || "https://instagram.com" },
+    { label: "Facebook", icon: FaFacebookF, href: socialLinks.facebook || "https://facebook.com" },
+    { label: "LinkedIn", icon: FaLinkedinIn, href: socialLinks.linkedin || "https://linkedin.com" },
+    { label: "YouTube", icon: FaYoutube, href: socialLinks.youtube || "https://youtube.com" },
+    { label: "Twitter", icon: FaTwitter, href: socialLinks.twitter },
+    { label: "TikTok", icon: FaTiktok, href: socialLinks.tiktok },
+  ].filter((s) => !!s.href);
+
   return (
     <footer className="relative overflow-hidden bg-[#0e85f9] px-4 pb-10 pt-12 text-white md:px-6">
       <div className="mx-auto max-w-[1280px]">
@@ -58,21 +81,20 @@ export function Footer() {
                   <p className="text-sm font-bold uppercase tracking-[0.15em] text-white">
                     Saro Media
                   </p>
-                  
                 </div>
               </div>
-
-              
 
               <div className="mt-6">
                 <p className="mb-3 text-xs font-semibold uppercase tracking-[0.2em] text-white/70">
                   Follow Us
                 </p>
                 <div className="flex flex-wrap items-center gap-3">
-                  {socials.map((item, index) => (
+                  {activeSocials.map((item, index) => (
                     <a
                       key={item.label}
                       href={item.href}
+                      target="_blank"
+                      rel="noopener noreferrer"
                       aria-label={item.label}
                       className="group flex h-10 w-10 -translate-y-0 items-center justify-center rounded-full border border-white/30 bg-white/10 text-white transition-all duration-300 hover:-translate-y-1 hover:bg-white hover:text-[#0e85f9] hover:shadow-lg hover:shadow-white/20"
                       style={{ transitionDelay: `${index * 50}ms` }}

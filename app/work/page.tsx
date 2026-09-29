@@ -8,36 +8,6 @@ import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { api } from "../lib/api";
 
-const DEFAULT_PROJECTS = [
-  {
-    id: "ethereal-autumn-lookbook",
-    slug: "ethereal-autumn-lookbook",
-    name: "Ethereal Autumn Lookbook",
-    category: "Photoshoot",
-    client: "Luminary Fashion",
-    image:
-      "https://res.cloudinary.com/demo/image/upload/v1612345678/agency/portfolio/covers/luminary-cover.jpg",
-  },
-  {
-    id: "hyperion-next-gen-cloud-platform",
-    slug: "hyperion-next-gen-cloud-platform",
-    name: "Hyperion Next-Gen Cloud Platform",
-    category: "Branding",
-    client: "Hyperion Tech",
-    image:
-      "https://res.cloudinary.com/demo/image/upload/v1612345678/agency/portfolio/covers/hyperion-cover.jpg",
-  },
-  {
-    id: "mindful-living-documentary-reel",
-    slug: "mindful-living-documentary-reel",
-    name: "Mindful Living Documentary & Reel",
-    category: "Videography",
-    client: "Aura Wellness",
-    image:
-      "https://res.cloudinary.com/demo/image/upload/v1612345678/agency/portfolio/covers/aura-cover.jpg",
-  },
-];
-
 const cardVariants: Variants = {
   hidden: { opacity: 0, scale: 0.92, y: 30 },
   visible: {
@@ -57,7 +27,7 @@ const cardVariants: Variants = {
 const PROJECTS_PER_PAGE = 6;
 
 export default function WorkPage() {
-  const [projectsList, setProjectsList] = useState<any[]>(DEFAULT_PROJECTS);
+  const [projectsList, setProjectsList] = useState<any[]>([]);
   const [activeCategory, setActiveCategory] = useState("All");
   const [currentPage, setCurrentPage] = useState(1);
   const [loading, setLoading] = useState(true);
@@ -68,7 +38,7 @@ export default function WorkPage() {
       .getPortfolio({ limit: 50 })
       .then((res: any) => {
         const items = res?.items || res || [];
-        if (mounted && Array.isArray(items) && items.length > 0) {
+        if (mounted && Array.isArray(items)) {
           const mapped = items.map((p) => ({
             id: p.id,
             slug: p.slug || p.id,
@@ -82,7 +52,7 @@ export default function WorkPage() {
         }
       })
       .catch((err) => {
-        console.warn('Using default projects:', err.message);
+        console.error('Failed to load portfolio from backend:', err);
       })
       .finally(() => {
         if (mounted) setLoading(false);

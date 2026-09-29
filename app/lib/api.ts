@@ -60,10 +60,11 @@ function toQueryString(params: Record<string, any> = {}): string {
 
 interface RequestOptions extends RequestInit {
   auth?: boolean;
+  timeoutMs?: number;
 }
 
 async function request<T = any>(endpoint: string, options: RequestOptions = {}): Promise<T> {
-  const { auth = true, headers = {}, ...rest } = options;
+  const { auth = true, headers = {}, timeoutMs = 15000, signal, ...rest } = options;
   const url = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
 
   const requestHeaders: Record<string, string> = {
@@ -84,10 +85,31 @@ async function request<T = any>(endpoint: string, options: RequestOptions = {}):
     requestHeaders['Content-Type'] = 'application/json';
   }
 
-  const response = await fetch(url, {
-    ...rest,
-    headers: requestHeaders,
-  });
+  // Handle timeout via AbortController
+  const controller = new AbortController();
+  const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+  let response: Response;
+  try {
+    response = await fetch(url, {
+      ...rest,
+      headers: requestHeaders,
+      signal: signal || controller.signal,
+    });
+  } catch (err: any) {
+    clearTimeout(timeoutId);
+    if (err.name === 'AbortError') {
+      const timeoutError = new Error('The request timed out. Please check your network connection and try again.');
+      (timeoutError as any).status = 504;
+      throw timeoutError;
+    }
+    const networkError = new Error('Unable to connect to the API server. Please ensure the backend is running.');
+    (networkError as any).status = 0;
+    (networkError as any).cause = err;
+    throw networkError;
+  } finally {
+    clearTimeout(timeoutId);
+  }
 
   const json = await response.json().catch(() => ({}));
 

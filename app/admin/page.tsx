@@ -20,22 +20,33 @@ import {
   ChevronRight,
   TrendingUp,
 } from 'lucide-react';
-import { api } from '../lib/api';
+import { useRouter } from 'next/navigation';
+import { api, authStorage } from '../lib/api';
 import { TableSetupBanner } from './components/TableSetupBanner';
 
 export default function AdminOverviewPage() {
+  const router = useRouter();
   const [summary, setSummary] = useState<any>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [copiedSql, setCopiedSql] = useState(false);
 
   const fetchSummary = async () => {
+    if (!authStorage.isAuthenticated()) {
+      router.replace('/admin/login');
+      return;
+    }
+
     setLoading(true);
     setError(null);
     try {
       const data = await api.getAnalyticsSummary();
       setSummary(data);
     } catch (err: any) {
+      if (err?.status === 401) {
+        router.replace('/admin/login');
+        return;
+      }
       setError(err?.message || 'Could not connect to backend analytics.');
     } finally {
       setLoading(false);

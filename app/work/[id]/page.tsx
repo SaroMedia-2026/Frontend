@@ -46,136 +46,6 @@ function TikTokIcon({ className = "w-4 h-4" }: { className?: string }) {
   );
 }
 
-const FALLBACK_PROJECTS: Record<string, any> = {
-  "ethereal-autumn-lookbook": {
-    title: "Ethereal Autumn Lookbook",
-    slug: "ethereal-autumn-lookbook",
-    client: "Luminary Fashion",
-    client_industry: "Luxury Apparel & Haute Couture",
-    category: "Photoshoot & Creative Direction",
-    description:
-      "A high-fashion luxury autumn campaign shot on location in Milan featuring editorial portraits, textile details, and viral short-form social creatives that drove a 2.4x increase in direct e-commerce sales.",
-    date: "October 2025",
-    cover_image_url:
-      "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1400&q=80",
-    tags: ["Fashion", "Editorial", "Milan", "Creative Direction", "Lookbook"],
-    deliverables: [
-      "Milan On-Location Editorial Shoot",
-      "High-Fashion Lookbook Photography",
-      "Multi-Variant Paid Social Ad Creatives",
-      "Digital Lookbook Catalog Design",
-    ],
-    results: [
-      { label: "ROAS Growth", value: "2.4x" },
-      { label: "Engagement Lift", value: "+214%" },
-      { label: "Audience Reach", value: "1.4M+" },
-    ],
-    instagram_url: "https://instagram.com",
-    facebook_url: "https://facebook.com",
-    tiktok_url: "https://tiktok.com",
-    media: [
-      {
-        url: "https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?auto=format&fit=crop&w=1400&q=80",
-        caption: "Milan Fashion Week lookbook editorial portrait",
-      },
-      {
-        url: "https://images.unsplash.com/photo-1490481651871-ab68de25d43d?auto=format&fit=crop&w=1200&q=80",
-        caption: "Editorial styling and haute couture autumn collection",
-      },
-      {
-        url: "https://images.unsplash.com/photo-1469334031218-e382a71b716b?auto=format&fit=crop&w=1200&q=80",
-        caption: "Bespoke textile and material textures",
-      },
-      {
-        url: "https://images.unsplash.com/photo-1509631179647-0177331693ae?auto=format&fit=crop&w=1200&q=80",
-        caption: "Sunset runway editorial photography",
-      },
-    ],
-  },
-  "hyperion-next-gen-cloud-platform": {
-    title: "Hyperion Next-Gen Cloud Platform",
-    slug: "hyperion-next-gen-cloud-platform",
-    client: "Hyperion Tech",
-    client_industry: "Enterprise AI & Cloud Infrastructure",
-    category: "Branding & Web Design",
-    description:
-      "Complete enterprise brand redesign, visual identity system, and high-performance product website for an AI enterprise cloud platform, driving a 140% surge in enterprise demo requests.",
-    date: "January 2026",
-    cover_image_url:
-      "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1400&q=80",
-    tags: ["Branding", "Enterprise", "Visual Design", "SaaS", "Web Design"],
-    deliverables: [
-      "Brand Identity & Dynamic Logo Mark",
-      "Comprehensive Digital Design System",
-      "Conversion-Engineered Enterprise Website",
-      "Interactive Product Launch Assets",
-    ],
-    results: [
-      { label: "Demo Requests", value: "+140%" },
-      { label: "Time on Site", value: "+85%" },
-      { label: "Pipeline Value", value: "$4.2M" },
-    ],
-    instagram_url: "https://instagram.com",
-    facebook_url: "https://facebook.com",
-    tiktok_url: "https://tiktok.com",
-    media: [
-      {
-        url: "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1400&q=80",
-        caption: "Enterprise cloud platform analytics dashboard",
-      },
-      {
-        url: "https://images.unsplash.com/photo-1507238691740-187a5b1d37b8?auto=format&fit=crop&w=1200&q=80",
-        caption: "Logo geometry, typography system, and dark UI palette",
-      },
-      {
-        url: "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
-        caption: "Data visualization and brand design guidelines",
-      },
-    ],
-  },
-  "mindful-living-documentary-reel": {
-    title: "Mindful Living Lookbook & Story",
-    slug: "mindful-living-documentary-reel",
-    client: "Aura Wellness",
-    client_industry: "Sustainable Health & Organic Living",
-    category: "Photoshoot & Social Strategy",
-    description:
-      "A cinematic visual narrative shot across coastal California exploring mindful routines, sustainable botanicals, and holistic lifestyle routines, reaching over 1.2M viewers across Meta and TikTok.",
-    date: "February 2026",
-    cover_image_url:
-      "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1400&q=80",
-    tags: ["Photoshoot", "Editorial", "Wellness", "Sustainability"],
-    deliverables: [
-      "Coastal Environmental Photography",
-      "Social-First Campaign Imagery",
-      "Organic Product Flatlays & Botanical Sets",
-      "Cross-Platform Social Creative Assets",
-    ],
-    results: [
-      { label: "Audience Reach", value: "1.2M+" },
-      { label: "Social Growth", value: "+380%" },
-      { label: "Acquisition Cost", value: "-32% CAC" },
-    ],
-    instagram_url: "https://instagram.com",
-    facebook_url: "https://facebook.com",
-    tiktok_url: "https://tiktok.com",
-    media: [
-      {
-        url: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?auto=format&fit=crop&w=1400&q=80",
-        caption: "Coastal morning meditation and mindful living photography",
-      },
-      {
-        url: "https://images.unsplash.com/photo-1506126613408-eca07ce68773?auto=format&fit=crop&w=1200&q=80",
-        caption: "Coastal sunrise location photography in Big Sur",
-      },
-      {
-        url: "https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=1200&q=80",
-        caption: "Sustainable organic botanical preparations",
-      },
-    ],
-  },
-};
-
 export default function WorkDetailPage() {
   const routeParams = useParams();
   const id =
@@ -199,16 +69,14 @@ export default function WorkDetailPage() {
       .then((data) => {
         if (mounted && data) {
           setProject(data);
+        } else if (mounted) {
+          setError(true);
         }
       })
-      .catch(() => {
+      .catch((err) => {
+        console.error('Failed to load portfolio item from backend:', err);
         if (mounted) {
-          const fallback = FALLBACK_PROJECTS[id];
-          if (fallback) {
-            setProject(fallback);
-          } else {
-            setError(true);
-          }
+          setError(true);
         }
       })
       .finally(() => {
@@ -220,7 +88,20 @@ export default function WorkDetailPage() {
     };
   }, [id]);
 
-  if (error && !project) {
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-[#f8fbfe] text-slate-900 flex flex-col justify-between">
+        <Header />
+        <div className="flex-1 flex flex-col items-center justify-center py-32">
+          <div className="w-10 h-10 border-3 border-blue-600 border-t-transparent rounded-full animate-spin mb-4" />
+          <p className="text-sm font-medium text-slate-500">Loading project details...</p>
+        </div>
+        <Footer />
+      </div>
+    );
+  }
+
+  if (error || !project) {
     notFound();
   }
 
@@ -254,12 +135,7 @@ export default function WorkDetailPage() {
     ...galleryPhotos.filter((p) => p.url !== coverImage),
   ];
 
-  const deliverables = project?.deliverables || [
-    "Brand Art Direction & Creative Strategy",
-    "High-Fashion & Product Lookbook Photography",
-    "Social-First Multi-Platform Visual Creatives",
-    "Performance Ad Assets & Digital Retouching",
-  ];
+  const deliverables: string[] = Array.isArray(project?.deliverables) ? project.deliverables : [];
 
 
   const nextSlide = () => {

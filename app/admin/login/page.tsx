@@ -10,8 +10,8 @@ import logo from '@/public/logo.png';
 
 export default function AdminLoginPage() {
   const router = useRouter();
-  const [email, setEmail] = useState('admin@saroagency.com');
-  const [password, setPassword] = useState('AdminSecurePassword123!');
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -30,38 +30,29 @@ export default function AdminLoginPage() {
     }
   };
 
-  const handleFillDemo = () => {
-    setEmail('admin@saroagency.com');
-    setPassword('AdminSecurePassword123!');
-    setError(null);
-  };
-
   return (
     <div className="w-full max-w-md relative">
       {/* Decorative ambient background glows matching Saro Hero */}
       <div className="pointer-events-none absolute -top-24 -left-20 w-72 h-72 rounded-full bg-blue-100/60 blur-3xl" />
       <div className="pointer-events-none absolute -bottom-20 -right-20 w-72 h-72 rounded-full bg-sky-100/60 blur-3xl" />
 
-      {/* Brand header */}
-      <div className="text-center mb-8 relative z-10">
+      {/* Brand header with centered Saro logo */}
+      <div className="text-center mb-6 relative z-10 flex flex-col items-center justify-center">
         <Link href="/" className="inline-block group mb-3">
           <Image
             src={logo}
             alt="Saro Logo"
-            width={180}
-            height={60}
-            className="h-14 w-auto object-contain mx-auto group-hover:scale-102 transition-transform"
+            width={200}
+            height={68}
+            className="h-16 w-auto object-contain mx-auto group-hover:scale-105 transition-transform"
             priority
           />
         </Link>
-        <div className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-blue-50 border border-blue-200/60 mb-2">
+        <div className="inline-flex items-center gap-1.5 px-3.5 py-1 rounded-full bg-blue-50 border border-blue-200/60">
           <span className="text-[11px] font-bold uppercase tracking-[0.14em] text-blue-600">
             Agency CMS Portal
           </span>
         </div>
-        <p className="text-xs text-slate-500 max-w-xs mx-auto">
-          Manage your website portfolio, testimonials, career openings, and inbound leads.
-        </p>
       </div>
 
       {/* Login Card */}
@@ -79,7 +70,7 @@ export default function AdminLoginPage() {
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-xs font-bold uppercase tracking-wider text-slate-700 mb-1.5">
-              Admin Email
+              Email Address
             </label>
             <div className="relative">
               <Mail className="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" />
@@ -88,7 +79,7 @@ export default function AdminLoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                placeholder="admin@saroagency.com"
+                placeholder="Enter your email"
                 className="w-full bg-slate-50/70 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-500/15 transition-all"
               />
             </div>
@@ -105,7 +96,7 @@ export default function AdminLoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                placeholder="••••••••••••"
+                placeholder="Enter your password"
                 className="w-full bg-slate-50/70 border border-slate-200 rounded-xl pl-10 pr-4 py-2.5 text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:border-blue-600 focus:bg-white focus:ring-2 focus:ring-blue-500/15 transition-all"
               />
             </div>
@@ -114,7 +105,7 @@ export default function AdminLoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full mt-2 py-3 px-4 rounded-xl bg-gradient-to-r from-blue-600 via-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-md shadow-blue-500/20 disabled:opacity-60 transition-all cursor-pointer"
+            className="w-full mt-3 py-3 px-4 rounded-xl bg-gradient-to-r from-blue-600 via-blue-600 to-indigo-600 hover:from-blue-700 hover:to-indigo-700 text-white font-semibold text-sm flex items-center justify-center gap-2 shadow-md shadow-blue-500/20 disabled:opacity-60 transition-all cursor-pointer"
           >
             {loading ? (
               <div className="w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -126,18 +117,6 @@ export default function AdminLoginPage() {
             )}
           </button>
         </form>
-
-        {/* Demo Fast-Fill */}
-        <div className="mt-6 pt-5 border-t border-slate-100 text-center">
-          <button
-            type="button"
-            onClick={handleFillDemo}
-            className="text-xs text-blue-600 hover:text-blue-700 font-semibold inline-flex items-center gap-1.5 transition-colors cursor-pointer"
-          >
-            <CheckCircle2 className="w-3.5 h-3.5 text-blue-600" />
-            <span>Fill Seed Admin Credentials</span>
-          </button>
-        </div>
       </div>
 
       <div className="text-center mt-6 relative z-10">

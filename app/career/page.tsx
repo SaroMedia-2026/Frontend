@@ -21,25 +21,6 @@ import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 import { api } from "../lib/api";
 
-const DEFAULT_JOBS = [
-  {
-    id: "senior-creative-director",
-    title: "Senior Creative Director",
-    department: "Creative & Design",
-    type: "full-time",
-    location: "New York / Hybrid",
-    description: "Lead our multidisciplinary team of designers, videographers, and brand strategists to craft landmark campaigns for high-growth tech and luxury brands.",
-  },
-  {
-    id: "performance-marketing-manager",
-    title: "Performance Marketing Manager",
-    department: "Growth & Analytics",
-    type: "full-time",
-    location: "Remote",
-    description: "Manage 7-figure multi-channel ad spend across Meta, Google Search/YouTube, TikTok, and programmatic channels, executing rigorous creative testing.",
-  },
-];
-
 const containerVariants: Variants = {
   hidden: { opacity: 0 },
   visible: {
@@ -61,7 +42,7 @@ const itemVariants: Variants = {
 };
 
 export default function CareerPage() {
-  const [jobs, setJobs] = useState<any[]>(DEFAULT_JOBS);
+  const [jobs, setJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   // Application Modal State
@@ -93,12 +74,12 @@ export default function CareerPage() {
     api
       .getCareers(false)
       .then((data) => {
-        if (mounted && Array.isArray(data) && data.length > 0) {
+        if (mounted && Array.isArray(data)) {
           setJobs(data);
         }
       })
-      .catch(() => {
-        // Fallback to default
+      .catch((err) => {
+        console.error('Failed to load careers from backend:', err);
       })
       .finally(() => {
         if (mounted) setLoading(false);

@@ -3,36 +3,34 @@
 import React, { useEffect, useState } from 'react';
 import { api } from '../lib/api';
 
-const DEFAULT_LOGOS = [
-  { client_name: 'UrbanSole', logo_url: '' },
-  { client_name: 'Cloudix', logo_url: '' },
-  { client_name: 'Nexora', logo_url: '' },
-  { client_name: 'Fitline', logo_url: '' },
-  { client_name: 'Horizon', logo_url: '' },
-  { client_name: 'Zepton', logo_url: '' },
-];
-
 export function TrustedBy() {
   const [logos, setLogos] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let mounted = true;
     api
       .getLogos(false)
       .then((data) => {
-        if (mounted && Array.isArray(data) && data.length > 0) {
+        if (mounted && Array.isArray(data)) {
           setLogos(data);
         }
       })
-      .catch(() => {
-        // Fallback to default names
+      .catch((err) => {
+        console.error('Failed to load logos from backend:', err);
+      })
+      .finally(() => {
+        if (mounted) setLoading(false);
       });
+
     return () => {
       mounted = false;
     };
   }, []);
 
-  const displayList = logos.length > 0 ? logos : DEFAULT_LOGOS;
+  if (!loading && logos.length === 0) {
+    return null;
+  }
 
   return (
     <section className="py-10 md:py-14">
@@ -42,7 +40,12 @@ export function TrustedBy() {
         </p>
 
         <div className="mt-6 grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 lg:grid-cols-6 gap-6 items-center justify-items-center">
-          {displayList.map((logo, idx) => (
+          {loading ? (
+            Array.from({ length: 6 }).map((_, idx) => (
+              <div key={idx} className="h-8 w-24 rounded-lg bg-slate-100 animate-pulse" />
+            ))
+          ) : (
+            logos.map((logo, idx) => (
             <div
               key={logo.id || logo.client_name || idx}
               className="flex items-center justify-center h-12 w-full px-3 transition-opacity duration-300 hover:opacity-100 opacity-60"
@@ -66,7 +69,7 @@ export function TrustedBy() {
                 </span>
               )}
             </div>
-          ))}
+          )))}
         </div>
       </div>
     </section>

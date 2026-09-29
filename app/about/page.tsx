@@ -47,20 +47,17 @@ const team = [
   {
     name: "Vijan Dharel",
     role: "Chief Executive Officer",
-    image:
-      "",
+    image: "",
   },
   {
-    name: "Sushan Dangol",
+    name: "Sushan Narayan Dangol",
     role: "Chief Operating Officer",
-    image:
-      "",
+    image: "",
   },
   {
-    name: "Subin Mall",
+    name: "Subin Malla",
     role: "Chief Financial Officer",
-    image:
-      "",
+    image: "",
   },
 ];
 

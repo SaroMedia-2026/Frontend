@@ -5,35 +5,9 @@ import { motion } from "framer-motion";
 import { ArrowLeft, ArrowRight } from "lucide-react";
 import { api } from "../lib/api";
 
-const DEFAULT_TESTIMONIALS = [
-  {
-    testimonial_text:
-      "Saro elevated our luxury collection launch with breathtaking cinematic videography and a high-converting digital campaign that doubled our ROAS in 60 days.",
-    client_name: "Elena Rostova",
-    company: "Luminary Fashion",
-    photo_url: "https://res.cloudinary.com/demo/image/upload/v1612345678/agency/testimonials/elena.jpg",
-    rating: 5,
-  },
-  {
-    testimonial_text:
-      "The team delivered an outstanding brand identity and interactive web experience. Our enterprise demo requests increased by 140% post-rebrand.",
-    client_name: "Marcus Vance",
-    company: "Hyperion Tech",
-    photo_url: "https://res.cloudinary.com/demo/image/upload/v1612345678/agency/testimonials/marcus.jpg",
-    rating: 5,
-  },
-  {
-    testimonial_text:
-      "Their creative direction is unmatched. Every photoshoot and social reel feels bespoke, authentic, and impeccably aligned with our aesthetic.",
-    client_name: "Sophia Chang",
-    company: "Aura Wellness",
-    photo_url: "https://res.cloudinary.com/demo/image/upload/v1612345678/agency/testimonials/sophia.jpg",
-    rating: 5,
-  },
-];
-
 export function Testimonials() {
-  const [items, setItems] = useState<any[]>(DEFAULT_TESTIMONIALS);
+  const [items, setItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [activeIndex, setActiveIndex] = useState(0);
 
   useEffect(() => {
@@ -41,13 +15,17 @@ export function Testimonials() {
     api
       .getTestimonials(false)
       .then((data) => {
-        if (mounted && Array.isArray(data) && data.length > 0) {
+        if (mounted && Array.isArray(data)) {
           setItems(data);
         }
       })
-      .catch(() => {
-        // Fallback to default
+      .catch((err) => {
+        console.error('Failed to load testimonials from backend:', err);
+      })
+      .finally(() => {
+        if (mounted) setLoading(false);
       });
+
     return () => {
       mounted = false;
     };
@@ -67,6 +45,10 @@ export function Testimonials() {
 
   const goToNext = () =>
     setActiveIndex((prev) => (prev + 1) % items.length);
+
+  if (!loading && items.length === 0) {
+    return null;
+  }
 
   return (
     <motion.section

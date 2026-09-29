@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, Variants } from "framer-motion";
 import { 
@@ -45,6 +45,7 @@ const itemVariants: Variants = {
 };
 
 export default function ContactPage() {
+  const [settings, setSettings] = useState<any>(null);
   const [formData, setFormData] = useState({
     firstName: "",
     lastName: "",
@@ -57,6 +58,24 @@ export default function ContactPage() {
   const [submitting, setSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    let mounted = true;
+    api
+      .getSiteSettings()
+      .then((data) => {
+        if (mounted && data) {
+          setSettings(data);
+        }
+      })
+      .catch((err) => {
+        console.error('Failed to load site settings:', err);
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -186,8 +205,11 @@ export default function ContactPage() {
                       </div>
                       <div>
                         <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Email Us</div>
-                        <a href="mailto:hello@saroagency.com" className="text-base font-bold text-slate-900 transition-colors group-hover:text-[#0e85f9]">
-                          hello@saroagency.com
+                        <a
+                          href={`mailto:${settings?.contact_email || 'hello@saroagency.com'}`}
+                          className="text-base font-bold text-slate-900 transition-colors group-hover:text-[#0e85f9]"
+                        >
+                          {settings?.contact_email || 'hello@saroagency.com'}
                         </a>
                       </div>
                     </motion.div>
@@ -201,8 +223,11 @@ export default function ContactPage() {
                       </div>
                       <div>
                         <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Call Us</div>
-                        <a href="tel:+9779800000000" className="text-base font-bold text-slate-900 transition-colors group-hover:text-[#0e85f9]">
-                          +977 9800000000
+                        <a
+                          href={`tel:${settings?.contact_phone || '+1 (555) 234-5678'}`}
+                          className="text-base font-bold text-slate-900 transition-colors group-hover:text-[#0e85f9]"
+                        >
+                          {settings?.contact_phone || '+1 (555) 234-5678'}
                         </a>
                       </div>
                     </motion.div>
@@ -217,7 +242,7 @@ export default function ContactPage() {
                       <div>
                         <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400">Visit Us</div>
                         <div className="text-base font-bold text-slate-900">
-                          Thankot, Kalimati, Kathmandu, Nepal
+                          {settings?.address || 'Thankot, Kalimati, Kathmandu, Nepal'}
                         </div>
                       </div>
                     </motion.div>

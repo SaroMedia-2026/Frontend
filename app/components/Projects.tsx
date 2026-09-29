@@ -6,42 +6,10 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import { api } from "../lib/api";
 
-const DEFAULT_PROJECTS = [
-  {
-    title: "Ethereal Autumn Lookbook",
-    slug: "ethereal-autumn-lookbook",
-    client: "Luminary Fashion",
-    category: "Photoshoot",
-    cover_image_url:
-      "https://res.cloudinary.com/demo/image/upload/v1612345678/agency/portfolio/covers/luminary-cover.jpg",
-    description: "A high-fashion autumn campaign shot on location in Milan featuring editorial portraits and video reels.",
-    accent: "bg-[#eaf5ff]",
-  },
-  {
-    title: "Hyperion Next-Gen Cloud Platform",
-    slug: "hyperion-next-gen-cloud-platform",
-    client: "Hyperion Tech",
-    category: "Branding",
-    cover_image_url:
-      "https://res.cloudinary.com/demo/image/upload/v1612345678/agency/portfolio/covers/hyperion-cover.jpg",
-    description: "Complete brand redesign, 3D motion graphics guidelines, and high-performance product website.",
-    accent: "bg-[#f1f9ff]",
-  },
-  {
-    title: "Mindful Living Documentary & Reel",
-    slug: "mindful-living-documentary-reel",
-    client: "Aura Wellness",
-    category: "Videography",
-    cover_image_url:
-      "https://res.cloudinary.com/demo/image/upload/v1612345678/agency/portfolio/covers/aura-cover.jpg",
-    description: "A cinematic brand film shot across coastal California exploring mindful routines and botanicals.",
-    accent: "bg-[#edf8ff]",
-  },
-];
-
 export function Projects() {
-  const [items, setItems] = useState<any[]>(DEFAULT_PROJECTS);
-  const [hasMore, setHasMore] = useState(true);
+  const [items, setItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [hasMore, setHasMore] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -49,14 +17,18 @@ export function Projects() {
       .getPortfolio({ limit: 6 })
       .then((res: any) => {
         const list = res?.items || res || [];
-        if (mounted && Array.isArray(list) && list.length > 0) {
+        if (mounted && Array.isArray(list)) {
           setItems(list.slice(0, 3));
           setHasMore(list.length > 3 || (res?.total && res.total > 3));
         }
       })
-      .catch(() => {
-        // Fallback to default
+      .catch((err) => {
+        console.error('Failed to load portfolio items from backend:', err);
+      })
+      .finally(() => {
+        if (mounted) setLoading(false);
       });
+
     return () => {
       mounted = false;
     };
@@ -81,7 +53,28 @@ export function Projects() {
         </div>
 
         {/* Grid Layout - 3 Projects */}
-        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+        {loading ? (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {[1, 2, 3].map((n) => (
+              <div
+                key={n}
+                className="overflow-hidden rounded-[1.8rem] border border-[#dfeaf2] bg-[#f7fbff] p-3 animate-pulse"
+              >
+                <div className="rounded-[1.3rem] aspect-video bg-slate-200/80" />
+                <div className="px-1 pt-4 pb-2 space-y-3">
+                  <div className="h-4 w-20 rounded-full bg-slate-200/80" />
+                  <div className="h-6 w-3/4 rounded bg-slate-200/80" />
+                  <div className="h-4 w-full rounded bg-slate-200/70" />
+                </div>
+              </div>
+            ))}
+          </div>
+        ) : items.length === 0 ? (
+          <div className="py-12 text-center text-slate-500">
+            <p className="text-sm font-medium">No projects available at the moment.</p>
+          </div>
+        ) : (
+          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
           {items.map((project, index) => {
             const projectUrl = `/work/${project.slug || project.id}`;
             const cover = project.cover_image_url || project.image || 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=80';
@@ -140,7 +133,8 @@ export function Projects() {
               </motion.article>
             );
           })}
-        </div>
+          </div>
+        )}
 
         {/* "View All Projects" Button */}
         {hasMore && (
