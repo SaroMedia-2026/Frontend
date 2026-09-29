@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import { SaroLoader } from "./components/SaroLoader";
 import { CustomCursor } from "./components/CustomCursor";
+import { Analytics } from "@vercel/analytics/next";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -88,6 +89,7 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
         <SaroLoader />
         <CustomCursor />
         {children}
+        <Analytics />
       </body>
     </html>
   );
