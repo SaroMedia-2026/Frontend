@@ -78,6 +78,46 @@ export const metadata: Metadata = {
   },
 };
 
+const jsonLd = {
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "Organization",
+      "@id": "https://saromedia.com.np/#organization",
+      "name": "Saro Media",
+      "alternateName": ["Saro", "Saro Media Nepal", "Saro Agency"],
+      "url": "https://saromedia.com.np",
+      "logo": {
+        "@type": "ImageObject",
+        "url": "https://saromedia.com.np/logo.png",
+        "caption": "Saro Media Logo",
+      },
+      "contactPoint": {
+        "@type": "ContactPoint",
+        "contactType": "client support",
+        "email": "vijan@saromedia.com.np",
+        "areaServed": ["NP", "Worldwide"],
+      },
+    },
+    {
+      "@type": "ProfessionalService",
+      "@id": "https://saromedia.com.np/#service",
+      "name": "Saro Media",
+      "url": "https://saromedia.com.np",
+      "logo": "https://saromedia.com.np/logo.png",
+      "image": "https://saromedia.com.np/logo.png",
+      "description":
+        "Premier performance marketing, video production, brand strategy, and creative testing agency in Kathmandu, Nepal.",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Kathmandu",
+        "addressCountry": "NP",
+      },
+      "priceRange": "$$",
+    },
+  ],
+};
+
 export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
   return (
     <html
@@ -86,6 +126,10 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
     >
       <body suppressHydrationWarning className="min-h-full bg-white text-slate-900">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
         <SaroLoader />
         <CustomCursor />
         {children}
