@@ -2,8 +2,18 @@
  * Saro Agency CMS - Backend API Client
  */
 
-export const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1';
+function getApiBaseUrl(): string {
+  let base = (process.env.NEXT_PUBLIC_API_URL || 'http://localhost:5000/api/v1').trim();
+  // Strip trailing slashes
+  base = base.replace(/\/+$/, '');
+  // Auto-append /api/v1 if not present
+  if (!base.endsWith('/api/v1')) {
+    base = `${base}/api/v1`;
+  }
+  return base;
+}
+
+export const API_BASE_URL = getApiBaseUrl();
 
 export interface AdminUser {
   id: string;
@@ -65,7 +75,8 @@ interface RequestOptions extends RequestInit {
 
 async function request<T = any>(endpoint: string, options: RequestOptions = {}): Promise<T> {
   const { auth = true, headers = {}, timeoutMs = 15000, signal, ...rest } = options;
-  const url = `${API_BASE_URL}${endpoint.startsWith('/') ? endpoint : `/${endpoint}`}`;
+  const cleanEndpoint = endpoint.replace(/^\/+/, '');
+  const url = `${API_BASE_URL}/${cleanEndpoint}`;
 
   const requestHeaders: Record<string, string> = {
     Accept: 'application/json',
