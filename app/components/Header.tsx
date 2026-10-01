@@ -188,7 +188,7 @@ export function Header() {
             animate={{ x: 0 }}
             exit={{ x: "100%" }}
             transition={{ type: "spring", damping: 25, stiffness: 200 }}
-            className="fixed right-0 top-0 z-40 h-full w-[300px] bg-white/95 backdrop-blur-xl border-l border-slate-200/80 shadow-2xl md:hidden"
+            className="fixed right-0 top-0 z-50 h-full w-[300px] bg-white/95 backdrop-blur-xl border-l border-slate-200/80 shadow-2xl md:hidden"
           >
             <div className="flex h-full flex-col p-6 pt-24">
               {/* Mobile Logo */}

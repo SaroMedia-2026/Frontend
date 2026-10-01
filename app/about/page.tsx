@@ -2,7 +2,6 @@
 
 import Link from "next/link";
 import { motion, Variants } from "framer-motion";
-import { Sparkles, ArrowRight, ShieldCheck, Target, Zap, Users } from "lucide-react";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 
@@ -107,22 +106,9 @@ export default function AboutPage() {
                 initial="hidden"
                 animate="visible"
               >
-                <motion.div variants={itemVariants} className="inline-block">
-                  <motion.div
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="inline-flex items-center gap-2 rounded-full border border-blue-200/90 bg-white/85 px-4 py-2 backdrop-blur-md shadow-[0_4px_20px_rgba(14,133,249,0.1)]"
-                  >
-                    <Sparkles className="h-4 w-4 text-[#0e85f9] animate-pulse" />
-                    <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#0e85f9]">
-                      About Saro
-                    </span>
-                  </motion.div>
-                </motion.div>
-
                 <motion.h1
                   variants={itemVariants}
-                  className="mt-6 text-4xl font-black tracking-[-0.07em] text-slate-900 md:text-5xl lg:text-[3.6rem] leading-[1.08]"
+                  className="text-4xl font-black tracking-[-0.07em] text-slate-900 md:text-5xl lg:text-[3.6rem] leading-[1.08]"
                 >
                   We Build Growth Systems for Brands That Want to{" "}
                   <span className="relative inline-block bg-gradient-to-r from-[#0e85f9] via-sky-500 to-[#0e85f9] bg-clip-text text-transparent">

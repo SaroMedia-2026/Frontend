@@ -97,7 +97,7 @@ export default function WorkPage() {
         </p>
 
         {/* Category Filter Bar */}
-        <section className="sticky top-[72px] z-40 border-b border-slate-200/80 bg-white/90 px-4 py-5 backdrop-blur-xl shadow-sm">
+        <section className="sticky top-[72px] z-20 border-b border-slate-200/80 bg-white/90 px-4 py-5 backdrop-blur-xl shadow-sm">
           <div className="mx-auto max-w-[1340px]">
             <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
               {/* Category Filter Pills */}

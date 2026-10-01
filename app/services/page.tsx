@@ -2,18 +2,25 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { ArrowRight, Sparkles, TrendingUp, Users, PenTool, BarChart3, Camera, Video, Share2 } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { Header } from "../components/Header";
 import { Footer } from "../components/Footer";
 
-const services = [
+interface ServiceItem {
+  title: string;
+  image: string;
+  alt: string;
+  bg: string;
+  description: string;
+}
+
+const services: ServiceItem[] = [
   {
     title: "Video Editing",
     image:
       "https://images.unsplash.com/photo-1492691527719-9d1e07e534b4?auto=format&fit=crop&w=1200&q=80",
     alt: "Video editing and production",
     bg: "from-[#0e85f9]/90 to-[#0e85f9]/70",
-    icon: Video,
     description: "Professional video editing that brings your stories to life with precision and creativity.",
   },
   {
@@ -22,7 +29,6 @@ const services = [
       "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=1200&q=80",
     alt: "Videography production",
     bg: "from-[#0e85f9]/85 to-[#0e85f9]/65",
-    icon: Camera,
     description: "High-quality videography for commercials, interviews, and brand storytelling.",
   },
   {
@@ -31,7 +37,6 @@ const services = [
       "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80",
     alt: "Photoshoot session",
     bg: "from-[#0e85f9]/90 to-[#0e85f9]/70",
-    icon: Sparkles,
     description: "Professional photoshoots that capture your brand's essence and products beautifully.",
   },
   {
@@ -40,7 +45,6 @@ const services = [
       "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1200&q=80",
     alt: "Content strategy planning",
     bg: "from-[#0e85f9]/85 to-[#0e85f9]/65",
-    icon: PenTool,
     description: "Strategic content planning to drive engagement, conversions, and brand growth.",
   },
   {
@@ -49,7 +53,6 @@ const services = [
       "https://images.unsplash.com/photo-1524758631624-e2822e304c36?auto=format&fit=crop&w=1200&q=80",
     alt: "Graphic design work",
     bg: "from-[#0e85f9]/90 to-[#0e85f9]/70",
-    icon: BarChart3,
     description: "Stunning graphic design for brands, social media, and marketing campaigns.",
   },
   {
@@ -58,7 +61,6 @@ const services = [
       "https://images.unsplash.com/photo-1611162616305-c69b3fa7fbe0?auto=format&fit=crop&w=1200&q=80",
     alt: "Social media handling",
     bg: "from-[#0e85f9]/85 to-[#0e85f9]/65",
-    icon: Share2,
     description: "Full-service social media management and content creation for your brand.",
   },
   {
@@ -67,7 +69,6 @@ const services = [
       "https://images.unsplash.com/photo-1551288049-bebda4e38f71?auto=format&fit=crop&w=1200&q=80",
     alt: "Meta ad boosting analytics",
     bg: "from-[#0e85f9]/90 to-[#0e85f9]/70",
-    icon: TrendingUp,
     description: "Data-driven ad campaigns that deliver measurable results and ROAS.",
   },
   {
@@ -76,7 +77,6 @@ const services = [
       "https://images.unsplash.com/photo-1460925895917-afdab827c52f?auto=format&fit=crop&w=1200&q=80",
     alt: "SEO strategy and growth",
     bg: "from-[#0e85f9]/85 to-[#0e85f9]/65",
-    icon: Users,
     description: "SEO strategies to boost your organic visibility, traffic, and conversions.",
   },
 ];
@@ -92,10 +92,7 @@ export default function ServicesPage() {
           <div className="mx-auto max-w-[1400px]">
             <div className="grid gap-8 md:grid-cols-2 md:items-center">
               <div>
-                <span className="inline-flex rounded-full border border-[#cfe8ff] bg-[#edf7ff] px-3 py-1.5 text-[10px] font-bold uppercase tracking-[0.2em] text-[#0e85f9]">
-                  Our Services
-                </span>
-                <h1 className="mt-6 text-4xl font-black tracking-[-0.08em] text-slate-900 md:text-5xl lg:text-[3.5rem]">
+                <h1 className="text-4xl font-black tracking-[-0.08em] text-slate-900 md:text-5xl lg:text-[3.5rem]">
                   Services That Drive{" "}
                   <span className="text-[#0e85f9]">Growth</span>
                 </h1>
@@ -109,7 +106,6 @@ export default function ServicesPage() {
             </div>
           </div>
         </section>
-
 
         {/* Services Grid */}
         <section className="px-4 py-16 md:py-20">
@@ -131,6 +127,8 @@ export default function ServicesPage() {
                       <img
                         src={service.image}
                         alt={service.alt}
+                        loading="lazy"
+                        decoding="async"
                         className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-110"
                       />
                       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
@@ -139,10 +137,7 @@ export default function ServicesPage() {
                     {/* Content */}
                     <div className="flex flex-col justify-between flex-1 p-6">
                       <div>
-                        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-[#edf7ff] text-[#0e85f9]">
-                          <service.icon className="h-5 w-5" />
-                        </div>
-                        <h2 className="mt-4 text-2xl font-black tracking-[-0.05em] text-slate-900">
+                        <h2 className="text-2xl font-black tracking-[-0.05em] text-slate-900">
                           {service.title}
                         </h2>
                         <p className="mt-3 text-sm leading-relaxed text-slate-600">
@@ -153,7 +148,7 @@ export default function ServicesPage() {
                       {/* Learn More Button */}
                       <div className="mt-6 flex items-center gap-2 text-sm font-semibold text-[#0e85f9] transition group-hover:gap-3">
                         <Link
-                          href={`/services/${service.title.toLowerCase().replace(/\s+/g, '-')}`}
+                          href="/contact"
                           className="flex items-center gap-2"
                         >
                           Learn More

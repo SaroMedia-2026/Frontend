@@ -9,7 +9,6 @@ import {
   MapPin,
   Briefcase,
   Users,
-  Sparkles,
   Upload,
   CheckCircle,
   AlertCircle,
@@ -165,22 +164,9 @@ export default function CareerPage() {
               animate="visible"
               className="mx-auto max-w-3xl text-center"
             >
-              <motion.div variants={itemVariants} className="inline-block">
-                <motion.div
-                  whileHover={{ scale: 1.05 }}
-                  whileTap={{ scale: 0.95 }}
-                  className="inline-flex items-center gap-2 rounded-full border border-blue-200/90 bg-white/85 px-4 py-2 backdrop-blur-md shadow-sm"
-                >
-                  <Sparkles className="h-4 w-4 text-[#0e85f9] animate-pulse" />
-                  <span className="text-xs font-bold uppercase tracking-[0.2em] text-[#0e85f9]">
-                    Join Our Team
-                  </span>
-                </motion.div>
-              </motion.div>
-
               <motion.h1
                 variants={itemVariants}
-                className="mt-6 text-4xl font-black tracking-[-0.07em] text-slate-900 md:text-6xl lg:text-[4rem] leading-tight"
+                className="text-4xl font-black tracking-[-0.07em] text-slate-900 md:text-6xl lg:text-[4rem] leading-tight"
               >
                 Build Your Career at{" "}
                 <span className="bg-gradient-to-r from-[#0e85f9] to-sky-500 bg-clip-text text-transparent">
